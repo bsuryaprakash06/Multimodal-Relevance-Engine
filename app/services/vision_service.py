@@ -1,9 +1,9 @@
-from app.providers.vision.groq_provider import GroqVisionProvider
+from app.providers.vision.unified_provider import UnifiedVisionProvider
 from app.schemas.image import ImageMetadataSchema
 
 class VisionService:
     def __init__(self):
-        self.provider = GroqVisionProvider()
+        self.provider = UnifiedVisionProvider()
         
     def process_image(self, filepath: str) -> tuple[ImageMetadataSchema, dict]:
         """

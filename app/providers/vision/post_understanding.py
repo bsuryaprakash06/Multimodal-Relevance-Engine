@@ -1,6 +1,4 @@
 import os
-import json
-from groq import Groq
 from pydantic import BaseModel, Field
 
 class PostMetadataSchema(BaseModel):
@@ -9,10 +7,43 @@ class PostMetadataSchema(BaseModel):
 
 class PostUnderstandingProvider:
     def __init__(self):
-        self.client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-        self.model = "qwen/qwen3.8-27b"
-        
+        self.use_gemini = "GEMINI_API_KEY" in os.environ
+        if self.use_gemini:
+            from google import genai
+            from google.genai import types
+            self.client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+            self.model = "gemini-2.5-flash"
+            self.types = types
+        else:
+            from groq import Groq
+            self.client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+            self.model = "qwen/qwen3.8-27b"
+            
     def analyze_post(self, content: str) -> tuple[PostMetadataSchema, dict]:
+        if self.use_gemini:
+            return self._analyze_gemini(content)
+        return self._analyze_groq(content)
+        
+    def _analyze_gemini(self, content: str) -> tuple[PostMetadataSchema, dict]:
+        response = self.client.models.generate_content(
+            model=self.model,
+            contents=f"Analyze this blog post and return a JSON object.\n\nPost content:\n{content}",
+            config=self.types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=PostMetadataSchema,
+                temperature=0.1
+            )
+        )
+        metadata = PostMetadataSchema.model_validate_json(response.text)
+        usage = {
+            "operation": "post_understanding",
+            "model": self.model,
+            "tokens": response.usage_metadata.total_token_count if response.usage_metadata else 0,
+            "cost": 0.0
+        }
+        return metadata, usage
+        
+    def _analyze_groq(self, content: str) -> tuple[PostMetadataSchema, dict]:
         prompt = (
             "Analyze this blog post and return a JSON object with the following schema exactly:\n"
             "{\n"
@@ -22,16 +53,13 @@ class PostUnderstandingProvider:
             "Return only valid JSON.\n\n"
             f"Post content:\n{content}"
         )
-        
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"}
         )
-        
         raw_json = response.choices[0].message.content
         metadata = PostMetadataSchema.model_validate_json(raw_json)
-        
         usage = {
             "operation": "post_understanding",
             "model": self.model,
