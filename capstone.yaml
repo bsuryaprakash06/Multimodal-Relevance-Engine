@@ -1,0 +1,4 @@
+run: "uvicorn app.main:app --reload"
+seed: "python test_phase2.py"
+test: "python evaluate.py"
+base_url: "http://localhost:8000"
