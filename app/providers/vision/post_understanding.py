@@ -10,7 +10,7 @@ class PostMetadataSchema(BaseModel):
 class PostUnderstandingProvider:
     def __init__(self):
         self.client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-        self.model = "llama-3.1-8b-instant"
+        self.model = "qwen/qwen3.8-27b"
         
     def analyze_post(self, content: str) -> tuple[PostMetadataSchema, dict]:
         prompt = (

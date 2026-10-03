@@ -7,7 +7,7 @@ from app.schemas.image import ImageMetadataSchema
 class GroqVisionProvider:
     def __init__(self):
         self.client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-        self.model = "llama-3.2-90b-vision-preview"
+        self.model = "qwen/qwen3.8-27b"
     
     def process_image(self, image_bytes: bytes, mime_type: str = "image/jpeg") -> tuple[ImageMetadataSchema, dict]:
         encoded = base64.b64encode(image_bytes).decode('utf-8')
