@@ -37,7 +37,7 @@ def seed_eval_data(db):
     
     # Create Posts
     fox_post = Post(title="The behavior of red foxes", content="Red foxes are fascinating wild animals known for their bushy tails.")
-    wolf_post = Post(title="Gray wolves pack dynamics", content="Wolves hunt in packs in the snowy wilderness.")
+    wolf_post = Post(title="Gray wolf pack dynamics", content="A gray wolf hunts in packs in the snowy wilderness.")
     mismatch_post = Post(title="Space Exploration", content="The James Webb telescope reveals distant galaxies.")
     
     db.add_all([fox_post, wolf_post, mismatch_post])

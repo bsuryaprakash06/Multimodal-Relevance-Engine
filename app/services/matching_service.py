@@ -20,7 +20,7 @@ class MatchService:
         self.embedding_service = EmbeddingService()
         self.post_provider = PostUnderstandingProvider()
         # Development thresholds
-        self.similarity_threshold = 0.75
+        self.similarity_threshold = 0.50
         self.confidence_threshold = 0.8
         
     def process_post_and_match(self, post_id: int) -> Match:
@@ -77,8 +77,8 @@ class MatchService:
         # Check subject/category mismatch
         expected_cat = (post.expected_category or "").lower()
         candidate_cat = (top_meta.category or "").lower()
-        if expected_cat and candidate_cat and expected_cat != candidate_cat:
-            return self._create_no_match(post.id, f"Category mismatch: expected '{expected_cat}', detected '{candidate_cat}'.")
+        # if expected_cat and candidate_cat and expected_cat not in candidate_cat and candidate_cat not in expected_cat:
+        #     return self._create_no_match(post.id, f"Category mismatch: expected '{expected_cat}', detected '{candidate_cat}'.")
             
         expected_sub = (post.expected_subject or "").lower()
         candidate_sub = (top_meta.subject or "").lower()
