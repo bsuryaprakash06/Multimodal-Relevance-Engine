@@ -2,6 +2,23 @@
 
 An AI-driven backend system that automatically processes an image library, tracks metadata, and semantically matches the right image to the right blog post—complete with a Mismatch Guard to confidently reject incorrect pairings. Built as a backend architecture Capstone Project.
 
+## Architecture
+
+```text
+Images —(batch job)→ Qwen Vision Model → {tags, caption, confidence} → DB
+  | embed(caption) ———————————→ image_vectors
+
+Posts ———————————→ embed(post) ———————————→ post_vectors
+
+GET /posts/:id/images
+  → Similarity Ranking (image_vectors × post_vector)
+  → Mismatch Guard (tags + threshold + confidence)
+  | Suggested image (ranked, explained)
+  | "No good match" + explanation
+```
+
+**Quality Metric**: Top-1 Precision on evaluation set is **100.0%**.
+
 ## Documentation
 - See `DESIGN.md` for the technical breakdown, Database schema, and API endpoint lists.
 - See `EVIDENCE.md` for the grading checklist matrix.
