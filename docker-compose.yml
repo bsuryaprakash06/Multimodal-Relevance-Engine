@@ -1,0 +1,22 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: multimodal_relevance_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./capstone.db
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - SIMILARITY_THRESHOLD=${SIMILARITY_THRESHOLD:-0.50}
+      - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-0.80}
+    volumes:
+      - app_data:/app/data
+      - db_data:/app/storage
+
+volumes:
+  app_data:
+  db_data:
