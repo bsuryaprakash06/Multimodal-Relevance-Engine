@@ -63,6 +63,8 @@ class MatchService:
             ranked.append((sim, img, meta_record))
             
         ranked.sort(key=lambda x: x[0], reverse=True)
+        if not ranked:
+            return self._create_no_match(post.id, "No valid candidates to rank.")
         top_sim, top_img, top_meta = ranked[0]
         
         # 5. Mismatch Guard
