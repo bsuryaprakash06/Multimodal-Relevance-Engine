@@ -1,6 +1,36 @@
-venv/
-__pycache__/
-*.pyc
+# Environments and secrets
 .env
+.env.*
+!.env.example
+*.env
+venv/
+.venv/
+env/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
 capstone.db
+
+# Data directories
 data/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
