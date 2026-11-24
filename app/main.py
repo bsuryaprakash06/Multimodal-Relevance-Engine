@@ -6,7 +6,7 @@ load_dotenv()
 
 from fastapi import FastAPI, Depends, BackgroundTasks, HTTPException
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.database import engine, Base, get_db
 from app.jobs.image_processor import ImageProcessorJob
@@ -55,15 +55,13 @@ class PostCreate(BaseModel):
     content: str
 
 class MatchResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     post_id: int
     image_id: Optional[int] = None
     status: str
     reason: str
     human_reviewed: bool
-
-    class Config:
-        from_attributes = True
 
 @app.post("/api/posts", summary="Create Blog Post", tags=["Posts"])
 def create_post(post: PostCreate, db: Session = Depends(get_db)):
